@@ -8,7 +8,7 @@ interface UserAPI {
     @GET("/users")
     suspend fun getUsers(
         @Query("count") count : Int
-    ) : UserListDTO
+    ) : UserListDTO?
 
     companion object{
         const val BASE_URL = "https://frontend-test-assignment-api.abz.agency/api/v1/"
