@@ -12,7 +12,9 @@ import com.example.catty.presentation.Screens.LoadingScreen
 import com.example.catty.presentation.Screens.MainScreen
 import com.example.catty.presentation.Screens.NotConnectedScreen
 import com.example.catty.utils.Screen
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
