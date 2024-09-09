@@ -5,7 +5,7 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface UserAPI {
-    @GET("/users")
+    @GET("users")
     suspend fun getUsers(
         @Query("count") count : Int
     ) : UserListDTO?
