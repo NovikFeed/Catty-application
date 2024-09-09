@@ -9,5 +9,5 @@ interface UserDao {
     @Upsert
     suspend fun upsertUserList(userList : List<UserEntity>)
     @Query("SELECT * FROM UserEntity")
-    suspend fun getUser() : List<UserEntity>
+    suspend fun getUsers() : List<UserEntity>
 }

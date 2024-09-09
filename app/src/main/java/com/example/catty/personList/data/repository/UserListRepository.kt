@@ -9,19 +9,41 @@ import com.example.catty.personList.domain.model.User
 import com.example.catty.personList.domain.util.Response
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import retrofit2.HttpException
+import java.io.IOException
 import javax.inject.Inject
 
 class UserListRepository @Inject constructor(
-    private val userAPI : UserAPI,
+    private val userAPI: UserAPI,
     private val database: UserDatabase
-) : Repository{
+) : Repository {
     override suspend fun getUserList(count: Int): Flow<Response<List<User>>> {
-        return flow{
+        return flow {
             emit(Response.Loading(true))
-            val remoteData = userAPI.getUsers(count)
-            if (remoteData != null){
+            val localData = database.userDao.getUsers()
+            val remoteData = try {
+                userAPI.getUsers(count)
+            }
+            catch (e : Exception){
+                e.printStackTrace()
+                emit(Response.Error(localData.map{it.toUser()}, e.message))
+                return@flow
+            }
+            catch (e : IOException){
+                e.printStackTrace()
+                emit(Response.Error(localData.map{it.toUser()}, e.message))
+                return@flow
+            }
+            catch (e : HttpException){
+                e.printStackTrace()
+                emit(Response.Error(localData.map{it.toUser()}, e.message))
+                return@flow
+            }
+            if (remoteData != null) {
                 database.userDao.upsertUserList(remoteData.users.map { it.toEntity() })
-                emit(Response.RemoteData(remoteData.users.map{it.toUser()}))
+                emit(Response.RemoteData(remoteData.users.map { it.toUser() }))
+                emit(Response.Loading(false))
+                return@flow
             }
         }
     }
