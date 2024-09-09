@@ -1,5 +1,6 @@
 package com.example.catty.personList.data.repository
 
+import android.util.Log
 import com.example.catty.personList.data.local.UserDatabase
 import com.example.catty.personList.data.mapers.toEntity
 import com.example.catty.personList.data.mapers.toUser
@@ -21,22 +22,26 @@ class UserListRepository @Inject constructor(
         return flow {
             emit(Response.Loading(true))
             val localData = database.userDao.getUsers()
+
             val remoteData = try {
                 userAPI.getUsers(count)
             }
             catch (e : Exception){
                 e.printStackTrace()
                 emit(Response.Error(localData.map{it.toUser()}, e.message))
+                emit(Response.Loading(false))
                 return@flow
             }
             catch (e : IOException){
                 e.printStackTrace()
                 emit(Response.Error(localData.map{it.toUser()}, e.message))
+                emit(Response.Loading(false))
                 return@flow
             }
             catch (e : HttpException){
                 e.printStackTrace()
                 emit(Response.Error(localData.map{it.toUser()}, e.message))
+                emit(Response.Loading(false))
                 return@flow
             }
             if (remoteData != null) {
