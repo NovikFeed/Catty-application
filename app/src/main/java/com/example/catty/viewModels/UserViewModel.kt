@@ -20,11 +20,12 @@ class UserViewModel @Inject constructor(
     private val userListRepository: UserListRepository
 ) : ViewModel() {
 
+    private val _userList = MutableStateFlow(UserListState())
+    val userList = _userList.asStateFlow()
+
     init {
         updateData()
     }
-    private val _userList = MutableStateFlow(UserListState())
-    val userList = _userList.asStateFlow()
 
     fun onEvent(events : UserListEvents){
         when(events){
