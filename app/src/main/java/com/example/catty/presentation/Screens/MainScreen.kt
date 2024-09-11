@@ -11,12 +11,14 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -25,17 +27,20 @@ import com.example.catty.R
 import com.example.catty.presentation.navigationScreen.SingUpScreen
 import com.example.catty.presentation.navigationScreen.UsersScreen
 import com.example.catty.utils.Screen
+import com.example.catty.viewModels.UserViewModel
 
 @Composable
 fun MainScreen() {
     val navController = rememberNavController()
+    val userViewModel = hiltViewModel<UserViewModel>()
+    val userListState = userViewModel.userList.collectAsState().value
     Scaffold(
         bottomBar = { BottomBar(navController = navController) }
     ) {
         Box(modifier = Modifier.padding(it)) {
             NavHost(navController = navController, startDestination = Screen.Users.rout) {
                 composable(Screen.Users.rout) {
-                    UsersScreen()
+                    UsersScreen(userListState, userViewModel::onEvent)
                 }
                 composable(Screen.SingUp.rout) {
                     SingUpScreen()
